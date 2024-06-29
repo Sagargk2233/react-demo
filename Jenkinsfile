@@ -13,10 +13,12 @@ pipeline {
       steps {
         echo 'Deploying to Heroku...'
         script {
+          echo 'Clearing HEROKU_API_KEY environment variable...'
+          bat 'set HEROKU_API_KEY='
+
           echo 'Logging into Heroku...'
           bat """
             echo ${HEROKU_EMAIL} | heroku login -i
-            echo ${HEROKU_API_KEY} | heroku login -i
           """
           echo 'Setting up Git...'
           bat """
