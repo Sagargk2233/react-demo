@@ -4,7 +4,7 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
   environment {
-    HEROKU_API_KEY = credentials('heroku-api-key')
+    HEROKU_API_KEY = 'HRKU-2a800dbd-7b01-4785-ba0f-0f034e0ccf36'
     HEROKU_EMAIL = 'chauhansagargk@gmail.com'
     APP_NAME = 'react-new-portfolio'
   }
@@ -12,25 +12,32 @@ pipeline {
     stage('Deploy to Heroku') {
       steps {
         echo 'Deploying to Heroku...'
-        withCredentials([string(credentialsId: 'heroku-api-key', variable: 'HEROKU_API_KEY')]) {
-            // bat "echo $HEROKU_API_KEY | heroku auth:token"
-
-            bat """
-            echo | set /p="heroku login -i" > login.bat
-            echo | set /p="%HEROKU_EMAIL%" >> login.bat
-            echo | set /p="%HEROKU_API_KEY%" >> login.bat
-            call login.bat
-
+        script {
+          echo 'Logging into Heroku...'
+          bat """
+            heroku login -i << EOF
+            ${HEROKU_EMAIL}
+            ${HEROKU_API_KEY}
+            EOF
+          """
+          echo 'Setting up Git...'
+          bat """
             git init
-            git config user.email "%HEROKU_EMAIL%"
+            git config user.email "${HEROKU_EMAIL}"
             git config user.name "Sagargk2233"
-            heroku git:remote -a %APP_NAME%
-            git add .
-            git commit -m "changes" || echo "No changes to commit"
-            git push -f heroku main
-            heroku buildpacks:set heroku/nodejs --app %APP_NAME%
-            git push -f heroku main
-            """
+          """
+          echo 'Adding files to Git...'
+          bat 'git add .'
+          echo 'Committing changes...'
+          bat 'git commit -m "Deploy to Heroku" || echo "No changes to commit"'
+          echo 'Setting Heroku remote...'
+          bat "heroku git:remote -a ${APP_NAME}"
+          echo 'Pushing to Heroku...'
+          bat 'git push -f heroku main'
+          echo 'Setting Node.js buildpack...'
+          bat "heroku buildpacks:set heroku/nodejs --app ${APP_NAME}"
+          echo 'Pushing again to apply changes...'
+          bat 'git push -f heroku main'
         }
       }
     }
