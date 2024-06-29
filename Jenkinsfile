@@ -9,24 +9,6 @@ pipeline {
     APP_NAME = 'react-new-portfolio'
   }
   stages {
-    stage('Checkout') {
-      steps {
-        echo 'Checking out the code...'
-        checkout scm
-      }
-    }
-    stage('Install Dependencies') {
-      steps {
-        echo 'Installing dependencies...'
-        bat 'npm install'
-      }
-    }
-    stage('Build') {
-      steps {
-        echo 'Building the application...'
-        bat 'npm run build'
-      }
-    }
     stage('Deploy to Heroku') {
       steps {
         echo 'Deploying to Heroku...'
