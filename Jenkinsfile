@@ -16,22 +16,20 @@ pipeline {
             // bat "echo $HEROKU_API_KEY | heroku auth:token"
 
             bat """
-              echo machine api.heroku.com > "%USERPROFILE%\\.netrc"
-              echo login %HEROKU_EMAIL% >> "%USERPROFILE%\\.netrc"
-              echo password %HEROKU_API_KEY% >> "%USERPROFILE%\\.netrc"
-              echo machine git.heroku.com >> "%USERPROFILE%\\.netrc"
-              echo login %HEROKU_EMAIL% >> "%USERPROFILE%\\.netrc"
-              echo password %HEROKU_API_KEY% >> "%USERPROFILE%\\.netrc"
-              
-              git init
-              git config user.email "chauhansagargk@gmail.com"
-              git config user.name "Sagargk2233"
-              git add .
-              git commit -m "Deploy to Heroku" || echo "No changes to commit"
-              heroku git:remote -a %APP_NAME%
-              heroku buildpacks:set heroku/nodejs --app %APP_NAME%
-              heroku git:remote -a $APP_NAME
-              git push heroku main
+            echo | set /p="heroku login -i" > login.bat
+            echo | set /p="%HEROKU_EMAIL%" >> login.bat
+            echo | set /p="%HEROKU_API_KEY%" >> login.bat
+            call login.bat
+
+            git init
+            git config user.email "%HEROKU_EMAIL%"
+            git config user.name "Sagargk2233"
+            heroku git:remote -a %APP_NAME%
+            git add .
+            git commit -m "changes" || echo "No changes to commit"
+            git push -f heroku main
+            heroku buildpacks:set heroku/nodejs --app %APP_NAME%
+            git push -f heroku main
             """
         }
       }
