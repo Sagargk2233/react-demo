@@ -9,16 +9,14 @@ pipeline {
     APP_NAME = 'react-new-portfolio'
   }
   stages {
-    stage('Deploy to Heroku') {
+   stage('Deploy to Heroku') {
       steps {
         echo 'Deploying to Heroku...'
         script {
           echo 'Logging into Heroku...'
           bat """
-            heroku login -i << EOF
-            ${HEROKU_EMAIL}
-            ${HEROKU_API_KEY}
-            EOF
+            echo ${HEROKU_EMAIL} | heroku login -i
+            echo ${HEROKU_API_KEY} | heroku login -i
           """
           echo 'Setting up Git...'
           bat """
