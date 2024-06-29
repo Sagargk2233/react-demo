@@ -4,38 +4,57 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
   environment {
-    HEROKU_API_KEY = 'HRKU-2a800dbd-7b01-4785-ba0f-0f034e0ccf36'
+    HEROKU_API_KEY = credentials('heroku-api-key')
     HEROKU_EMAIL = 'chauhansagargk@gmail.com'
     APP_NAME = 'react-new-portfolio'
   }
   stages {
+    stage('Checkout') {
+      steps {
+        echo 'Checking out the code...'
+        checkout scm
+      }
+    }
+    stage('Install Dependencies') {
+      steps {
+        echo 'Installing dependencies...'
+        bat 'npm install'
+      }
+    }
+    stage('Build') {
+      steps {
+        echo 'Building the application...'
+        bat 'npm run build'
+      }
+    }
     stage('Deploy to Heroku') {
       steps {
         echo 'Deploying to Heroku...'
-        script {
-          echo 'Logging into Heroku...'
-          bat """
-            set HEROKU_API_KEY=
-            echo ${HEROKU_EMAIL} | heroku login -i
-          """
-          echo 'Setting up Git...'
-          bat """
+        withCredentials([string(credentialsId: 'heroku-api-key', variable: 'HEROKU_API_KEY')]) {
+            // bat "echo $HEROKU_API_KEY | heroku auth:token"
+
+            bat """
+            echo | set /p="heroku login -i" > login.bat
+            echo | set /p="%HEROKU_EMAIL%" >> login.bat
+            echo | set /p="%HEROKU_API_KEY%" >> login.bat
+            call login.bat
+
+            echo "git init"
             git init
-            git config user.email "${HEROKU_EMAIL}"
+            echo "git config"
+            git config user.email "%HEROKU_EMAIL%"
             git config user.name "Sagargk2233"
-          """
-          echo 'Adding files to Git...'
-          bat 'git add .'
-          echo 'Committing changes...'
-          bat 'git commit -m "Deploy to Heroku" || echo "No changes to commit"'
-          echo 'Setting Heroku remote...'
-          bat "heroku git:remote -a ${APP_NAME}"
-          echo 'Pushing to Heroku...'
-          bat 'git push -f heroku main'
-          echo 'Setting Node.js buildpack...'
-          bat "heroku buildpacks:set heroku/nodejs --app ${APP_NAME}"
-          echo 'Pushing again to apply changes...'
-          bat 'git push -f heroku main'
+            echo "hero git remote"
+            heroku git:remote -a %APP_NAME%
+            git add .
+            git commit -m "changes" || echo "No changes to commit"
+            echo "heroku push"
+            git push -f heroku main
+            echo "set heroku buildpack"
+            heroku buildpacks:set heroku/nodejs --app %APP_NAME%
+            echo "git init"
+            git push -f heroku main
+            """
         }
       }
     }
