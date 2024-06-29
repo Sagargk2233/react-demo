@@ -28,6 +28,8 @@ pipeline {
               git config user.name "Sagargk2233"
               git add .
               git commit -m "Deploy to Heroku" || echo "No changes to commit"
+              heroku git:remote -a %APP_NAME%
+              heroku buildpacks:set heroku/nodejs --app %APP_NAME%
               heroku git:remote -a $APP_NAME
               git push heroku main
             """
