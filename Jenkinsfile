@@ -30,7 +30,7 @@ pipeline {
      stage('Deploy') {
             steps {
                 script {
-                    def buildDir = 'C:\\My PC\\MCA-SEM-4\\NewReactProject\\portfolio'
+                    def buildDir = 'build'
                     def deployDir = 'C:\\My PC\\MCA-SEM-4\\NewReactProject\\Deployments\\portfolio'
                     bat "if exist ${deployDir}\\* del /Q ${deployDir}\\*"
                     bat "xcopy /E /I ${buildDir} ${deployDir}"
