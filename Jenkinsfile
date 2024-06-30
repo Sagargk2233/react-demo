@@ -27,7 +27,17 @@ pipeline {
         bat 'npm run build'
       }
     }
-    stage('Deploy to Local') {
+     stage('Deploy') {
+            steps {
+                script {
+                    def buildDir = 'C:\\My PC\\MCA-SEM-4\\NewReactProject\\portfolio'
+                    def deployDir = 'C:\\My PC\\MCA-SEM-4\\NewReactProject\\Deployments\\portfolio'
+                    bat "if exist ${deployDir}\\* del /Q ${deployDir}\\*"
+                    bat "xcopy /E /I ${buildDir} ${deployDir}"
+                }
+            }
+        }
+    stage('Serve') {
       steps {
         echo 'Deploying to Local...'
         script {
