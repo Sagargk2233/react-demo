@@ -27,27 +27,12 @@ pipeline {
         bat 'npm run build'
       }
     }
-    stage('Deploy to Heroku') {
+    stage('Deploy to Local') {
       steps {
-        echo 'Deploying to Heroku...'
-        withCredentials([string(credentialsId: 'heroku-api-key', variable: 'HEROKU_API_KEY')]) {
-            // bat "echo $HEROKU_API_KEY | heroku auth:token"
-
-            bat """
-              echo machine api.heroku.com > "%USERPROFILE%\\.netrc"
-              echo login %HEROKU_EMAIL% >> "%USERPROFILE%\\.netrc"
-              echo password %HEROKU_API_KEY% >> "%USERPROFILE%\\.netrc"
-              echo machine git.heroku.com >> "%USERPROFILE%\\.netrc"
-              echo login %HEROKU_EMAIL% >> "%USERPROFILE%\\.netrc"
-              echo password %HEROKU_API_KEY% >> "%USERPROFILE%\\.netrc"
-              git init
-              git config user.email "chauhansagargk@gmail.com"
-              git config user.name "Sagargk2233"
-              git add .
-              git commit -m "Deploy to Heroku" || echo "No changes to commit"
-              heroku git:remote -a $APP_NAME
-              git push heroku main
-            """
+        echo 'Deploying to Local...'
+        script {
+            def deployDir = 'C:\\My PC\\MCA-SEM-4\\NewReactProject\\Deployments\\portfolio'
+            bat "http-server ${deployDir} -p 8080 &"
         }
       }
     }
