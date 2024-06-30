@@ -15,7 +15,6 @@ function App() {
       <Experience />
       <Projects />
       <Contact />
-      Hello World
     </div>
   );
 }
