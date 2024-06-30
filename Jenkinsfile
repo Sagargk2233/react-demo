@@ -24,22 +24,18 @@ pipeline {
     }
      stage('Deploy') {
             steps {
-                script {
+                 script {
                     def buildDir = 'build'
-                    def deployDir = 'C:\\My PC\\MCA-SEM-4\\NewReactProject\\Deployments\\portfolio'
-                    bat "if exist ${deployDir}\\* del /Q ${deployDir}\\*"
-                    bat "xcopy \"${buildDir}\\*\" \"${deployDir}\" /E /I /Y /Q"
+                    def deployDir = 'C:\\My PC\\MCA-SEM-4\\NewReactProject\\Deployments\\portfolio' // Change to your deployment directory
+                    bat """
+                        if exist ${deployDir} (
+                            rmdir /S /Q ${deployDir}
+                        )
+                        mkdir ${deployDir}
+                        xcopy "${buildDir}\\*" "${deployDir}" /E /I /Y /Q
+                    """
                 }
             }
         }
-    stage('Serve') {
-      steps {
-        echo 'Deploying to Local...'
-        script {
-            def deployDir = 'C:\\My PC\\MCA-SEM-4\\NewReactProject\\Deployments\\portfolio'
-            bat "start cmd.exe /c http-server \"${deployDir}\" -p 8070"
-        }
-      }
-    }
   }
 }
