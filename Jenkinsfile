@@ -34,6 +34,7 @@ pipeline {
                         mkdir ${deployDir}
                         xcopy "${buildDir}\\*" "${deployDir}" /E /I /Y /Q
                     """
+                    echo "deployed on localhost:8050"
                 }
             }
         }
