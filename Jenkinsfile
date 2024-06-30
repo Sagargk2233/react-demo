@@ -33,7 +33,7 @@ pipeline {
                     def buildDir = 'build'
                     def deployDir = 'C:\\My PC\\MCA-SEM-4\\NewReactProject\\Deployments\\portfolio'
                     bat "if exist ${deployDir}\\* del /Q ${deployDir}\\*"
-                    bat "xcopy '${buildDir}\\*' '${deployDir}' /E /I /Y /Q"
+                    bat "xcopy \"${buildDir}\\*\" \"${deployDir}\" /E /I /Y /Q"
                 }
             }
         }
