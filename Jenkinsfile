@@ -42,7 +42,7 @@ pipeline {
         echo 'Deploying to Local...'
         script {
             def deployDir = 'C:\\My PC\\MCA-SEM-4\\NewReactProject\\Deployments\\portfolio'
-            bat "http-server ${deployDir} -p 8080 &"
+            bat "http-server ${deployDir} -p 8070 &"
         }
       }
     }
